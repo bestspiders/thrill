@@ -1,6 +1,6 @@
 # thrill  
 **使用该ss时必须有一台国内主机和一台国外主机**     
-![illustration](https://github.com/bestspiders/thrill/master/illustration.png)
+![illustration](https://github.com/bestspiders/thrill/master/illustration.png?raw=true)
 参数讲解
 ```
 {
