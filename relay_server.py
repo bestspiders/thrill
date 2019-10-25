@@ -18,7 +18,7 @@ import os
 import json
 import logging
 import getopt
-
+from disguise import mysql
 def get_table(key):
     m = hashlib.md5()
     m.update(key)
@@ -44,6 +44,8 @@ class Socks5Server(SocketServer.StreamRequestHandler):
     def handle_tcp(self, sock,remote, dst_addr,dst_port):
         try:
             fdset = [sock, remote]
+            if PROXY_MODE=='mysql':
+                mysql.disguise_relay_mysql(remote)
             remote.sendall(chr(len(dst_addr)))
             remote.sendall(dst_addr)
             remote.sendall(chr(len(str(dst_port))))
@@ -116,7 +118,7 @@ if __name__ == '__main__':
     KEY = config['password']
     PROXY_IP=config['proxy_ip']
     PROXY_PORT=config['proxy_port']
-
+    PROXY_MODE=config['proxy_mode']
     optlist, args = getopt.getopt(sys.argv[1:], 'p:k:')
     for key, value in optlist:
         if key == '-p':

@@ -10,7 +10,8 @@
     "password":"xxx",
     "timeout":600,
     "proxy_ip":"xxx",
-    "proxy_port": 28909
+    "proxy_port":3306,
+    "proxy_mode":"mysql"
 }
 ```
 server此参数为监听的服务端地址   
@@ -23,13 +24,13 @@ server此参数为监听的服务端地址
 "server":"0.0.0.0"
 ```
 server_port此参数为服务端监听的端口   
-local_port为客户端监听的本地端口
+local_port为客户端监听的本地端口   
 passwordw为客户端连接服务端的密码   
 timeout连接超时时间  
 proxy_ip为你的vps的ip   
 proxy_port为你vps端口  
-
-本地config.json   
+proxy_mode为你国外vps的伪装模式   
+本地config.json    
 ```
 {
     "server":"39.33.39.12", 
@@ -38,7 +39,8 @@ proxy_port为你vps端口
     "password":"123456",
     "timeout":600,
     "proxy_ip":"55.12.52.12",
-    "proxy_port": 28909
+    "proxy_port":3306,
+    "proxy_mode":"mysql"
 }
 ``` 
 中继服务器config.json   
@@ -50,7 +52,8 @@ proxy_port为你vps端口
     "password":"123456",
     "timeout":600,
     "proxy_ip":"55.12.52.12",
-    "proxy_port": 28909
+    "proxy_port":3306,
+    "proxy_mode":"mysql"
 }
 ```
 vps config.json   
@@ -62,7 +65,8 @@ vps config.json
     "password":"123456",
     "timeout":600,
     "proxy_ip":"55.12.52.12",
-    "proxy_port": 28909
+    "proxy_port":3306,
+    "proxy_mode":"mysql"
 }
 ```
 ##客户端启动  

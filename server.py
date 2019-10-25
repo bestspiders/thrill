@@ -15,10 +15,11 @@ import SocketServer
 import struct
 import string
 import hashlib
-import os
+import os,sys
 import json
 import logging
 import getopt
+from disguise import mysql
 def send_all(sock, data):
     bytes_sent = 0
     while True:
@@ -57,22 +58,29 @@ class Socks5Server(SocketServer.StreamRequestHandler):
     def handle(self):
         try:
             sock = self.connection
-            addr_len=ord(sock.recv(1))
-            addr =sock.recv(addr_len)   # get dst addr
-            print addr
-            port_len=ord(sock.recv(1))
-            port =int(sock.recv(port_len))
-            print(port)
-            try:
-                logging.info('connecting %s:%d' % (addr, port))
-                remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                remote.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-                remote.connect((addr,port))         # connect to dst
-            except socket.error, e:
-                # Connection refused
-                logging.warn(e)
-                return
-            self.handle_tcp(sock,remote)
+            if PROXY_MODE=='mysql':
+                status=mysql.disguise_server_mysql(sock)
+            else:
+                status=0
+            if status==1:
+                sock.close()
+            else:
+                addr_len=ord(sock.recv(1))
+                addr =sock.recv(addr_len)   # get dst addr
+                print addr
+                port_len=ord(sock.recv(1))
+                port =int(sock.recv(port_len))
+                print(port)
+                try:
+                    logging.info('connecting %s:%d' % (addr, port))
+                    remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    remote.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                    remote.connect((addr,port))         # connect to dst
+                except socket.error, e:
+                    # Connection refused
+                    logging.warn(e)
+                    return
+                self.handle_tcp(sock,remote)
         except socket.error, e:
             logging.warn(e)
 if __name__ == '__main__':
@@ -81,8 +89,10 @@ if __name__ == '__main__':
     SERVER = config['server']
     PORT = config['server_port']
     KEY = config['password']
+    PROXY_PORT=config['proxy_port']
+    PROXY_MODE=config['proxy_mode']
     try:
-        server = ThreadingTCPServer(('', PORT), Socks5Server)
+        server = ThreadingTCPServer(('', PROXY_PORT), Socks5Server)
         logging.info("starting server at port %d ..." % PORT)
         server.serve_forever()
     except socket.error, e:
